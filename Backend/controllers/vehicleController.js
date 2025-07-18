@@ -45,14 +45,11 @@ async function getVehicle(req, res) {
     try {
         const vehicleDetails=await Vehicle.find({status:"available"});
         if(vehicleDetails.length===0){
-            return res.json({
-                error:"not found",
+            return res.status(404).json({
                 message: "Not available"
             })
         }
-       return res.json({
-            vehicleDetails
-        })
+    return res.status(200).json({ vehicleDetails })
     }
     catch (err) {
         console.log(err)
