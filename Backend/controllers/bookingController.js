@@ -29,13 +29,22 @@ async function addBookingDetails(req, res) {
 
         const parsedData = bookingInput.safeParse(req.body);
         if (!parsedData.success) {
+            console.log("parsedDara error --> ", parsedData.error)
+            console.log("parsedDara error22 --> ", parsedData.error.fieldErrors)
+            const fieldErrors = Object.values(parsedData.error.flatten().fieldErrors).flat();
+
             return res.status(400).json({
                 error: "Validation failed, please correctly fill all fields",
-                details: parsedData.error.flatten().fieldErrors
+                details: fieldErrors
             });
         }
 
         const { vehicleId, fromPincode, toPincode, startTime, endTime, customerId } = req.body;
+        if (startTime > endTime) {
+            return res.status(400).json({
+                error: "Start date cant be greator that end date",
+            });
+        }
 
         const vehicle = await Vehicle.findById(vehicleId);
         if (!vehicle) {
@@ -46,28 +55,40 @@ async function addBookingDetails(req, res) {
             return res.status(400).json({ error: "Vehicle is not available" });
         }
 
+        const estimatedHours = Math.abs(parseInt(toPincode) - parseInt(fromPincode)) % 24;
+        const bookingStartTime = new Date(startTime);
+        const bookingEndTime = new Date(bookingStartTime.getTime() + estimatedHours * 60 * 60 * 1000);
+        const isoverlappingBooking = await Booking.findOne({
+            vehicleId,
+            $or: [
+                {
+                    startTime: { $lt: bookingEndTime },
+                    endTime: { $gt: bookingStartTime }
+                }
+            ]
+        });
+        console.log(bookingStartTime, bookingEndTime, isoverlappingBooking)
+
+        if (isoverlappingBooking) {
+            return res.status(409).json({ error: "Vehicle is already booked during this time." });
+        }
         const booking = await Booking.create({
             vehicleId,
             fromPincode,
             toPincode,
-            startTime,
-            endTime,
+            startTime: bookingStartTime,
+            endTime: bookingEndTime,
             customerId
         });
-
-        await Vehicle.findByIdAndUpdate(vehicleId, { status: "inUse" });
 
         res.status(201).json({ message: "Booking created successfully", booking });
 
     } catch (err) {
-        res.status(500).json({ error: "Server error", details: err.message });
+        console.error("Booking creation failed:", err);
+        return res.status(500).json({ error: "Internal server error." });
     }
-}
-function getBookingDetails(req, res) {
-
 }
 
 module.exports = {
     addBookingDetails,
-    getBookingDetails
 }
