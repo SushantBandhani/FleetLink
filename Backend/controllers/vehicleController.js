@@ -1,10 +1,15 @@
 const z = require("zod")
 const Vehicle = require("../models/vehcile")
 
+// using zod validation to ensure required fields have correct types
 const vehicleInput = z.object({
-    name: z.string(),
-    capacityKg: z.number(),
-    tyres: z.number()
+    name: z.string()
+        .trim()
+        .min(3, "Name must be 3 characters long")
+        .regex(/^(?=.*[a-zA-Z])[a-zA-Z\s]{3,}$/, "Name must contain only letters and at least one alphabet"),
+    capacityKg: z.number().positive("Capacity must be a postive"),
+    tyres: z.number().int().min(4, "There must be atleast four tyre"),
+    status:z.enum( ['available', 'inUse', 'not available']).optional()
 })
 
 
@@ -13,15 +18,19 @@ async function addVehicle(req, res) {
         const parsedData = vehicleInput.safeParse(req.body);
 
         if (!parsedData.success) {
-            return res.status(411).json({ message: "Inputs are not valid" });
+            return res.status(411).json({
+                message: "Inputs are not valid",
+                errors: parsedData.error.errors
+            });
         }
 
-        const { name, capacityKg, tyres } = parsedData.data;
+        const { name, capacityKg, tyres,status } = parsedData.data;
 
         const newVehicle = new Vehicle({
             name,
             capacityKg,
-            tyres
+            tyres,
+            status
         })
         await newVehicle.save();
         res.status(200).json({ newVehicle });
@@ -32,8 +41,23 @@ async function addVehicle(req, res) {
     }
 }
 
-function getVehicle(req, res) {
-
+async function getVehicle(req, res) {
+    try {
+        const vehicleDetails=await Vehicle.find({status:"available"});
+        if(vehicleDetails.length===0){
+            return res.json({
+                error:"not found",
+                message: "Not available"
+            })
+        }
+       return res.json({
+            vehicleDetails
+        })
+    }
+    catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Server Error" })
+    }
 }
 
 module.exports = {
