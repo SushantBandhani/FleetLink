@@ -19,7 +19,7 @@ const PORT = process.env.PORT || 3000;
 connectTodb();
 
 app.use("/api/vehicles",vechileRoutes)
-app.use("/api/bookings",bookingRoutes)
+app.use("/api/booking",bookingRoutes)
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`)
