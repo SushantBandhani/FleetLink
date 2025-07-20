@@ -35,8 +35,12 @@ const Vehicle = () => {
             });
 
             const data = await response.json();
+            if(!response.ok){
+                throw new Error(data.errors)
+            }
+
             console.log(data);
-            toast.success(data.message || "Vehicle added successfully!");
+            toast.success("Vehicle added successfully!");
         }
         catch (err) {
             toast.error(err.message || "Something went wrong!");
@@ -60,7 +64,7 @@ const Vehicle = () => {
                         placeholder="e.g. Tata Ace"
                         value={formData.name}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                     />
                 </div>
 
@@ -72,7 +76,7 @@ const Vehicle = () => {
                         placeholder="e.g. 1200"
                         value={formData.capacityKg}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                     />
                 </div>
 
@@ -84,7 +88,7 @@ const Vehicle = () => {
                         placeholder="e.g. 4"
                         value={formData.tyres}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                     />
                 </div>
 
@@ -94,7 +98,7 @@ const Vehicle = () => {
                         name="status"
                         value={formData.status}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
                     >
                         <option value="available">Available</option>
                         <option value="inUse">In Use</option>
@@ -104,7 +108,7 @@ const Vehicle = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+                    className="w-full bg-amber-400 hover:bg-amber-500 text-white py-2 rounded-lg font-medium transition duration-200"
                 >
                     Submit Vehicle
                 </button>

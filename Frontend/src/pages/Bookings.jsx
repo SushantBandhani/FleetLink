@@ -4,7 +4,7 @@ import BookingForm from '../components/BookingForm';
 export default function Bookings() {
   async function handleBooking(formData) {
     try {
-      const response = await fetch("http://localhost:3000/api/booking", {
+      const response = await fetch("http://localhost:3000/api/bookings", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -17,26 +17,16 @@ export default function Bookings() {
       });
 
       const data = await response.json();
-      console.log(data);
-      if(data?.message){
-        toast.success(data.message || "Vehicle added successfully!");
+      if(!response.ok){
+        throw new Error(data?.errors || data?.error )
       }
-      else{
-        if(data?.details){
-          throw Error(data.details.join(" and "))
-        }
-        else{
-          throw Error(data.error);
-        }
-
-      }
+      toast.success(data.message || "Vehicle added successfully!")
     }
     catch (err) {
       toast.error(err.message || "Something went wrong!");
       console.error("Vehicle creation error:", err);
 
     }
-    // Make API call here if needed
   }
 
   return (
