@@ -3,14 +3,10 @@ import { HiOutlineMenu, HiOutlineX } from "react-icons/hi";
 import SideBar from "./SideBar";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "./ErrorFallback";
-import { ActiveContext } from "../context/ActiveContext";
-import Vehicle from "../pages/Vehicle";
-import Bookings from "../pages/Bookings";
 import { Outlet } from "react-router-dom";
 
 const Layout = () => {
   const [openSideMenu, setOpenSideMenu] = useState(false);
-  const { active } = useContext(ActiveContext);
 
   return (
     <>
@@ -37,16 +33,6 @@ const Layout = () => {
           </div>
         )}
       </div>
-      {/* {
-        active === 'vehicles' ?
-          <div className={`${openSideMenu ? 'ml-72 transition-all duration-200' : 'ml-0 transition-all duration-200'}`}>
-            <Vehicle />
-          </div>
-          :
-          <div className={`${openSideMenu ? 'ml-72 transition-all duration-200' : 'ml-0 transition-all duration-200'}`}>
-            <Bookings />
-          </div>
-      } */}
       <div className={`${openSideMenu ? 'ml-70 transition-all duration-200' : 'ml-0 transition-all duration-200'}`}>
         <Outlet></Outlet>
       </div>

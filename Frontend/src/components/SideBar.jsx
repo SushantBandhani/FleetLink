@@ -4,10 +4,9 @@ import { SIDE_MENU_DATA } from "../utils/SideBarData"
 import { ActiveContext } from "../context/ActiveContext"
 import { useNavigate } from "react-router-dom"
 
-
 const SideBar = () => {
-    const {active,setActive}=useContext(ActiveContext);
-    const navigate=useNavigate();
+    const { active, setActive } = useContext(ActiveContext);
+    const navigate = useNavigate();
     return (
         <div className="w-64 h-[calc(100vh-61px)] bg-white border-r border-gray-200/50 p-5 sticky top-[61px]">
             <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
@@ -19,9 +18,9 @@ const SideBar = () => {
 
             {
                 SIDE_MENU_DATA.map((item) => {
-                   return <button
+                    return <button
                         key={item.id}
-                        className={`w-full flex items-center gap-4 text-[15px] ${active===item.label ? "text-white bg-blue-500" : ""} py-3 px-6 rounded-lg mb-3`}
+                        className={`w-full flex items-center gap-4 text-[15px] ${active === item.label ? "text-white bg-blue-500" : ""} py-3 px-6 rounded-lg mb-3 cursor-pointer`}
                         onClick={() => {
                             setActive(item.label)
                             navigate(item.path)
@@ -35,7 +34,6 @@ const SideBar = () => {
         </div>
     )
 }
-
 
 
 function CharAvatar({ fullName, width, height, style }) {

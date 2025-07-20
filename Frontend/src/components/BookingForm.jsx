@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
+import { getCustomerId } from '../utils/getCustomerId';
+
+function createFormData(data) {
+  return {
+    vehicleId: '',
+    fromPincode: data.fromPincode,
+    toPincode: data.toPincode,
+    startTime: data.startTime,
+    customerId: '',
+  }
+}
 
 export default function BookingForm({ onBook }) {
-  const [formData, setFormData] = useState({
-    vehicleId: '',
-    fromPincode: '',
-    toPincode: '',
-    startTime: '',
-    endTime: '',
-    customerId: '',
-  });
+  const location = useLocation();
+  const custId = getCustomerId(); // Generating random customerId, to imitate the behaviour of full logged in user
+  const [formData, setFormData] = useState(createFormData(location.state.searchQuery));
+  const { id } = useParams();
 
-  const {id}=useParams();
-  useEffect(()=>{
-    setFormData({...formData,vehicleId:id})
-  },[])
+  useEffect(() => {
+    setFormData({ ...formData, vehicleId: id, customerId: custId })
+  }, [])
+
   function handleChange(e) {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -23,14 +30,6 @@ export default function BookingForm({ onBook }) {
   function handleSubmit(e) {
     e.preventDefault();
     onBook?.(formData);
-    setFormData({
-      vehicleId: '',
-      fromPincode: '',
-      toPincode: '',
-      startTime: '',
-      endTime: '',
-      customerId: '',
-    });
   }
 
   return (
@@ -75,30 +74,16 @@ export default function BookingForm({ onBook }) {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700">Start Time</label>
-          <input
-            type="date"
-            name="startTime"
-            value={formData.startTime}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700">End Time</label>
-          <input
-            type="date"
-            name="endTime"
-            value={formData.endTime}
-            onChange={handleChange}
-            required
-            className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-        </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Start Time</label>
+        <input
+          type="date"
+          name="startTime"
+          value={formData.startTime}
+          onChange={handleChange}
+          required
+          className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+        />
       </div>
 
       <div>
@@ -108,7 +93,6 @@ export default function BookingForm({ onBook }) {
           name="customerId"
           value={formData.customerId}
           onChange={handleChange}
-          required
           className="w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
         />
       </div>

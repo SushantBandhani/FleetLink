@@ -11,7 +11,7 @@ export const getVehicleIcon = (name) => {
   return <TbTruckDelivery className="text-4xl text-gray-600" />;
 };
 
-export default function VehicleCard({ vehicle ,booking}) {
+export default function VehicleCard({ vehicle, searchQuery }) {
   const navigate = useNavigate();
 
   return (
@@ -30,7 +30,7 @@ export default function VehicleCard({ vehicle ,booking}) {
       <div className="mt-5 flex justify-around">
         <button
           className="px-5 py-2 text-sm font-semibold bg-amber-500 text-white rounded-full shadow-md hover:bg-amber-600 hover:shadow-lg transition duration-200"
-          onClick={() => navigate(`/bookings/${vehicle._id}`)}
+          onClick={() => navigate(`/bookings/${vehicle._id}`, { state: { searchQuery } })}
         >
           Book Now
         </button>
