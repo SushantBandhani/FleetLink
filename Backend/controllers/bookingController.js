@@ -5,22 +5,15 @@ const Booking = require("../models/booking")
 
 const bookingInput = z.object({
     vehicleId: z.string().min(1, "vehicleId is required"),
-    fromPincode: z.string().length(6, "fromPincode must be 6 digits"),
-    toPincode: z.string().length(6, "toPincode must be 6 digits"),
-    startTime: z
-        .string()
+    fromPincode: z.string().length(6, "fromPincode must be 6 digits and should not contains letters"),
+    toPincode: z.string().length(6, "toPincode must be 6 digits  and should not contains letters"),
+    startTime: z.string()
         .refine((str) => /^\d{4}-\d{2}-\d{2}$/.test(str), {
             message: "Invalid date format. Use yyyy-mm-dd",
         })
         .refine((date) => { return date >= new Date().toISOString().split('T')[0] })
         .transform((str) => new Date(str)),
-    endTime: z
-        .string()
-        .refine((str) => /^\d{4}-\d{2}-\d{2}$/.test(str), {
-            message: "Invalid date format. Use yyyy-mm-dd",
-        })
-        .transform((str) => new Date(str)),
-    customerId: z.string().optional().default(() => new mongoose.Types.ObjectId().toString())  // setting it default as of now
+    customerId: z.string().optional().default(() => new mongoose.Types.ObjectId().toString())
 
 });
 
@@ -29,22 +22,15 @@ async function addBookingDetails(req, res) {
 
         const parsedData = bookingInput.safeParse(req.body);
         if (!parsedData.success) {
-            console.log("parsedDara error --> ", parsedData.error)
-            console.log("parsedDara error22 --> ", parsedData.error.fieldErrors)
             const fieldErrors = Object.values(parsedData.error.flatten().fieldErrors).flat();
 
             return res.status(400).json({
-                error: "Validation failed, please correctly fill all fields",
-                details: fieldErrors
+                message: "Inputs are not valid",
+                errors: parsedData.error.issues.map((issue) => issue.message).join(" | ")
             });
         }
 
-        const { vehicleId, fromPincode, toPincode, startTime, endTime, customerId } = req.body;
-        if (startTime > endTime) {
-            return res.status(400).json({
-                error: "Start date cant be greator that end date",
-            });
-        }
+        const { vehicleId, fromPincode, toPincode, startTime, customerId } = req.body;
 
         const vehicle = await Vehicle.findById(vehicleId);
         if (!vehicle) {
@@ -60,12 +46,8 @@ async function addBookingDetails(req, res) {
         const bookingEndTime = new Date(bookingStartTime.getTime() + estimatedHours * 60 * 60 * 1000);
         const isoverlappingBooking = await Booking.findOne({
             vehicleId,
-            $or: [
-                {
-                    startTime: { $lt: bookingEndTime },
-                    endTime: { $gt: bookingStartTime }
-                }
-            ]
+            startTime: { $lt: bookingEndTime },
+            endTime: { $gt: bookingStartTime },
         });
         console.log(bookingStartTime, bookingEndTime, isoverlappingBooking)
 
