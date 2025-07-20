@@ -83,10 +83,6 @@ async function getVehicle(req, res) {
         if (!parsedData.success) {
             console.log("parsedData error --> ", parsedData.error);
 
-            const fieldErrors = Object.values(
-                parsedData.error?.flatten()?.fieldErrors || {}
-            ).flat();
-
             return res.status(400).json({
                 message: "Inputs are not valid",
                 errors: parsedData.error.issues.map((issue) => issue.message).join(" | ")
