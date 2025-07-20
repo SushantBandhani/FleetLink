@@ -17,12 +17,10 @@ function App() {
           <Routes>
             <Route path="/" element={<Navigate to="/vehicle" replace />} />
 
-            {/* Layout route wraps nested routes */}
             <Route path="/" element={<Layout />}>
               <Route path="vehicle" element={<Vehicle />} />
               <Route path="bookings/:id" element={<Bookings />} />
               <Route path="get-vehicles" element={<GetVehicles />} />
-              {/* <Route path="signUp" element={<Signup />} /> */}
             </Route>
           </Routes>
         </Router>
