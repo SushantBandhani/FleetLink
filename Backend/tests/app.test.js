@@ -1,5 +1,5 @@
 const request = require('supertest');
-const app = require('../src/server'); // Your main app file
+const app = require('../src/server');
 
 // Test cases for api/vehicles/available
 test('GET /api/vehicles/available - should get available vehicles with filters', async () => {
@@ -17,8 +17,6 @@ test('GET /api/vehicles/available - should get available vehicles with filters',
     expect(response.body.message).toBeDefined();
     expect(response.body.message.SearchItems).toBeDefined();
     expect(Array.isArray(response.body.message.SearchItems)).toBe(true);
-
-    console.log('✓ GET /api/vehicles/available with filters works');
 });
 
 
@@ -53,7 +51,6 @@ test('POST /api/vehicles - should add vehicles', async () => {
 
     expect(response.body).toBeDefined();
     expect(response.body.newVehicle).toBeDefined();
-    console.log('✓ GET /api/vehicles/available with filters works');
 });
 
 test('POST /api/vehicles - should get an error while add vehicles', async () => {
