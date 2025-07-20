@@ -3,7 +3,6 @@ const { addBookingDetails, getBookingDetails } = require("../controllers/booking
 
 const router=express.Router()
 
-// router.get("/",getBookingDetails);
 router.post("/",addBookingDetails);
 
 module.exports=router
